@@ -7,6 +7,10 @@ import Cadastro from './pages/Cadastro'
 import Servicos from './pages/Servicos'
 import Barbeiros from './pages/Barbeiros'
 import Perfil from './pages/Perfil'
+import Agendar from './pages/Agendar'
+import Agendamentos from './pages/Agendamentos'
+import AdminBarbeiros from './pages/AdminBarbeiros'
+import AdminServicos from './pages/AdminServicos'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -21,6 +25,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="/servicos" element={<Servicos />} />
         <Route path="/barbeiros" element={<Barbeiros />} />
+
         <Route
           path="/perfil"
           element={
@@ -29,6 +34,45 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Cliente: novo agendamento */}
+        <Route
+          path="/agendar"
+          element={
+            <ProtectedRoute roles={['cliente']}>
+              <Agendar />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Lista de agendamentos: cliente (os seus), barbeiro (sua agenda), admin (todos) */}
+        <Route
+          path="/agendamentos"
+          element={
+            <ProtectedRoute roles={['cliente', 'barbeiro', 'admin']}>
+              <Agendamentos />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Administrador */}
+        <Route
+          path="/admin/barbeiros"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminBarbeiros />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/servicos"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminServicos />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

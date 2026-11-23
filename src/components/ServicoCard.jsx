@@ -1,7 +1,11 @@
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { formatPreco, formatDuracao } from '../utils/format'
 
 export default function ServicoCard({ servico }) {
-  const { nome, descricao, preco, duracao, ativo, barbeiros_detalhes } = servico
+  const { id, nome, descricao, preco, duracao, ativo, barbeiros_detalhes } = servico
+  const { autenticado, usuario } = useAuth()
+  const podeAgendar = ativo && (!autenticado || usuario?.tipo === 'cliente')
   const qtdBarbeiros = barbeiros_detalhes?.length ?? 0
 
   return (
@@ -23,6 +27,12 @@ export default function ServicoCard({ servico }) {
       </div>
 
       {!ativo && <span className="badge badge-off">Inativo</span>}
+
+      {podeAgendar && (
+        <Link to={`/agendar?servico=${id}`} className="btn btn-primary card-cta">
+          Agendar
+        </Link>
+      )}
     </article>
   )
 }

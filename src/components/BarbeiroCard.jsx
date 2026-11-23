@@ -1,7 +1,11 @@
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { iniciais } from '../utils/format'
 
 export default function BarbeiroCard({ barbeiro }) {
-  const { nome, email, telefone, ativo } = barbeiro
+  const { id, nome, email, telefone, ativo } = barbeiro
+  const { autenticado, usuario } = useAuth()
+  const podeAgendar = ativo && (!autenticado || usuario?.tipo === 'cliente')
 
   return (
     <article className="glass card">
@@ -20,6 +24,12 @@ export default function BarbeiroCard({ barbeiro }) {
           <span className="badge badge-off">Inativo</span>
         )}
       </div>
+
+      {podeAgendar && (
+        <Link to={`/agendar?barbeiro=${id}`} className="btn btn-primary card-cta">
+          Agendar com {nome.split(' ')[0]}
+        </Link>
+      )}
     </article>
   )
 }

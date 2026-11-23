@@ -8,7 +8,8 @@ export default function Login() {
   const { entrar } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const destino = location.state?.from?.pathname || '/'
+  const origem = location.state?.from
+  const destino = origem ? `${origem.pathname}${origem.search || ''}` : '/'
 
   const [form, setForm] = useState({ username: '', password: '' })
   const [erro, setErro] = useState('')
