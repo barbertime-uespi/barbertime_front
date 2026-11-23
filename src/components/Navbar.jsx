@@ -1,13 +1,35 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../context/AuthContext'
 import Brand from './Brand'
+
+// Links extras por papel do usuário (campo `tipo` do perfil).
+const LINKS_POR_PAPEL = {
+  cliente: [
+    { to: '/agendar', label: 'Agendar' },
+    { to: '/agendamentos', label: 'Meus agendamentos' },
+  ],
+  barbeiro: [{ to: '/agendamentos', label: 'Minha agenda' }],
+  admin: [
+    { to: '/agendamentos', label: 'Agendamentos' },
+    { to: '/admin/barbeiros', label: 'Gerir barbeiros' },
+    { to: '/admin/servicos', label: 'Gerir serviços' },
+  ],
+}
 
 export default function Navbar() {
   const { autenticado, usuario, sair } = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [menuAberto, setMenuAberto] = useState(false)
+
+  const linksDoPapel = autenticado ? LINKS_POR_PAPEL[usuario?.tipo] || [] : []
 
   async function handleSair() {
     await sair()
+    queryClient.clear() // não deixa dados do usuário anterior em cache
+    setMenuAberto(false)
     navigate('/login')
   }
 
@@ -18,7 +40,10 @@ export default function Navbar() {
           <Brand />
         </NavLink>
 
-        <nav className="nav-links">
+        <nav
+          className={`nav-links${menuAberto ? ' open' : ''}`}
+          onClick={() => setMenuAberto(false)}
+        >
           <NavLink to="/" end className="nav-link">
             Início
           </NavLink>
@@ -28,6 +53,11 @@ export default function Navbar() {
           <NavLink to="/barbeiros" className="nav-link">
             Barbeiros
           </NavLink>
+          {linksDoPapel.map((link) => (
+            <NavLink key={link.to} to={link.to} className="nav-link">
+              {link.label}
+            </NavLink>
+          ))}
           {autenticado && (
             <NavLink to="/perfil" className="nav-link">
               Perfil
@@ -55,6 +85,14 @@ export default function Navbar() {
               </NavLink>
             </>
           )}
+          <button
+            className="btn btn-ghost nav-toggle"
+            aria-label="Abrir menu"
+            aria-expanded={menuAberto}
+            onClick={() => setMenuAberto((aberto) => !aberto)}
+          >
+            ☰
+          </button>
         </div>
       </div>
     </header>

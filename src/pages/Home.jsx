@@ -13,12 +13,17 @@ export default function Home() {
           WhatsApp.
         </h1>
         <p>
-          Consulte serviços e barbeiros, gerencie seu perfil e prepare-se para agendar
+          Consulte serviços e barbeiros, gerencie seu perfil e agende
           seu horário — tudo em um só lugar. A agenda de papel ficou no passado.
         </p>
 
         <div className="hero-actions">
-          <Link to="/servicos" className="btn btn-primary">
+          {(!autenticado || usuario?.tipo === 'cliente') && (
+            <Link to="/agendar" className="btn btn-primary">
+              Agendar horário
+            </Link>
+          )}
+          <Link to="/servicos" className="btn btn-ghost">
             Ver serviços
           </Link>
           <Link to="/barbeiros" className="btn btn-ghost">
